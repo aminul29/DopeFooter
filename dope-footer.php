@@ -3,7 +3,7 @@
  * Plugin Name:       DopeFooter
  * Plugin URI:        https://example.com/dope-footer
  * Description:       Configurable shortcode footer with CodeStar Framework settings and multiple layout presets.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            DopeFooter Team
  * Text Domain:       dope-footer
  * Domain Path:       /languages
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'DOPE_FOOTER_VERSION', '1.0.0' );
+define( 'DOPE_FOOTER_VERSION', '1.0.1' );
 define( 'DOPE_FOOTER_FILE', __FILE__ );
 define( 'DOPE_FOOTER_PATH', plugin_dir_path( __FILE__ ) );
 define( 'DOPE_FOOTER_URL', plugin_dir_url( __FILE__ ) );
@@ -49,4 +49,3 @@ function dope_footer_init() {
 	\DopeFooter\Plugin::instance();
 }
 add_action( 'plugins_loaded', 'dope_footer_init' );
-
