@@ -93,6 +93,15 @@ class Public_Frontend {
 	}
 
 	/**
+	 * Ensure frontend assets are registered.
+	 *
+	 * @return void
+	 */
+	public function ensure_assets_registered() {
+		$this->register_assets();
+	}
+
+	/**
 	 * Render footer from shortcode.
 	 *
 	 * @param array $atts Shortcode attrs.

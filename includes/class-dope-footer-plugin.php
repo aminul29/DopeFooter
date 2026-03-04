@@ -50,6 +50,13 @@ class Plugin {
 	private $admin = null;
 
 	/**
+	 * Elementor integration instance.
+	 *
+	 * @var Elementor_Integration|null
+	 */
+	private $elementor = null;
+
+	/**
 	 * Get instance.
 	 *
 	 * @return Plugin
@@ -84,10 +91,22 @@ class Plugin {
 		$this->public    = new Public_Frontend( $this->options );
 		$this->shortcode = new Shortcode( $this->public );
 
-		if ( is_admin() ) {
+		if ( $this->is_elementor_active() ) {
+			require_once DOPE_FOOTER_PATH . 'includes/class-dope-footer-elementor.php';
+			$this->elementor = new Elementor_Integration( $this->public );
+		} elseif ( is_admin() ) {
 			require_once DOPE_FOOTER_PATH . 'admin/class-dope-footer-admin.php';
 			$this->admin = new Admin( $this->options );
 		}
+	}
+
+	/**
+	 * Check whether Elementor is active.
+	 *
+	 * @return bool
+	 */
+	private function is_elementor_active() {
+		return did_action( 'elementor/loaded' ) || class_exists( '\Elementor\Plugin' );
 	}
 
 	/**
@@ -144,4 +163,3 @@ class Plugin {
 		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'dope-footer' ), DOPE_FOOTER_VERSION );
 	}
 }
-
