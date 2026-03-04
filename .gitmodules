@@ -1,0 +1,3 @@
+[submodule "vendor/codestar-framework"]
+	path = vendor/codestar-framework
+	url = https://github.com/Codestar/codestar-framework.git
