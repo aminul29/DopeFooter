@@ -9,6 +9,7 @@ namespace DopeFooter\Elementor;
 
 use DopeFooter\Options;
 use Elementor\Controls_Manager;
+use Elementor\Group_Control_Background;
 use Elementor\Icons_Manager;
 use Elementor\Repeater;
 use Elementor\Widget_Base;
@@ -98,26 +99,6 @@ class Dope_Footer_Widget extends Widget_Base {
 			array(
 				'label' => esc_html__( 'Layout & Behavior', 'dope-footer' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
-			)
-		);
-
-		$this->add_control(
-			'layout_preset',
-			array(
-				'label'   => esc_html__( 'Layout', 'dope-footer' ),
-				'type'    => Controls_Manager::CHOOSE,
-				'options' => array(
-					'signature' => array(
-						'title' => esc_html__( 'Signature', 'dope-footer' ),
-						'icon'  => 'eicon-columns',
-					),
-					'split'     => array(
-						'title' => esc_html__( 'Split', 'dope-footer' ),
-						'icon'  => 'eicon-h-align-stretch',
-					),
-				),
-				'default' => 'signature',
-				'toggle'  => false,
 			)
 		);
 
@@ -418,9 +399,6 @@ class Dope_Footer_Widget extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		$layout_preset = isset( $settings['layout_preset'] ) ? sanitize_key( $settings['layout_preset'] ) : 'signature';
-		$layout_preset = in_array( $layout_preset, array( 'signature', 'split' ), true ) ? $layout_preset : 'signature';
-
 		$brand_name    = isset( $settings['brand_name'] ) ? sanitize_text_field( $settings['brand_name'] ) : '';
 		$brand_tagline = isset( $settings['brand_tagline'] ) ? sanitize_textarea_field( $settings['brand_tagline'] ) : '';
 
@@ -450,63 +428,14 @@ class Dope_Footer_Widget extends Widget_Base {
 		$css_vars        = $this->build_css_vars( $settings );
 		$css_vars_inline = $this->build_css_vars_inline( $css_vars );
 		?>
-		<footer class="<?php echo esc_attr( 'dope-footer dope-footer--' . $layout_preset ); ?>" style="<?php echo esc_attr( $css_vars_inline ); ?>">
+		<footer class="dope-footer dope-footer--signature dope-footer--elementor" style="<?php echo esc_attr( $css_vars_inline ); ?>">
 			<div class="dope-footer__container">
-				<?php if ( 'split' === $layout_preset ) : ?>
-					<div class="dope-footer__split-top">
-						<div class="dope-footer__brand-col">
-							<h2 class="dope-footer__brand-name"><?php echo esc_html( $brand_name ); ?></h2>
-							<?php if ( '' !== trim( $brand_tagline ) ) : ?>
-								<p class="dope-footer__brand-tagline"><?php echo esc_html( $brand_tagline ); ?></p>
-							<?php endif; ?>
-						</div>
-
-						<?php if ( $show_contact ) : ?>
-							<div class="dope-footer__contact-col">
-								<h3 class="dope-footer__col-title"><?php echo esc_html( $contact_title ); ?></h3>
-								<?php if ( '' !== trim( $contact_text ) ) : ?>
-									<p class="dope-footer__contact-text"><?php echo esc_html( $contact_text ); ?></p>
-								<?php endif; ?>
-								<?php if ( '' !== trim( $contact_link_url ) && '' !== trim( $contact_link_label ) ) : ?>
-									<a class="dope-footer__contact-link" href="<?php echo esc_url( $contact_link_url ); ?>" <?php echo $contact_link_attrs; ?>>
-										<?php echo esc_html( $contact_link_label ); ?>
-									</a>
-								<?php endif; ?>
-							</div>
+				<div class="dope-footer__grid dope-footer__grid--signature">
+					<div class="dope-footer__brand-col">
+						<h2 class="dope-footer__brand-name"><?php echo esc_html( $brand_name ); ?></h2>
+						<?php if ( '' !== trim( $brand_tagline ) ) : ?>
+							<p class="dope-footer__brand-tagline"><?php echo esc_html( $brand_tagline ); ?></p>
 						<?php endif; ?>
-					</div>
-
-					<div class="dope-footer__split-bottom">
-						<?php if ( $show_quick_links && ! empty( $quick_links ) ) : ?>
-							<nav class="dope-footer__links-col" aria-label="<?php echo esc_attr( $quick_title ); ?>">
-								<h3 class="dope-footer__col-title"><?php echo esc_html( $quick_title ); ?></h3>
-								<ul class="dope-footer__link-list dope-footer__link-list--inline">
-									<?php foreach ( $quick_links as $item ) : ?>
-										<li>
-											<a href="<?php echo esc_url( $item['url'] ); ?>" <?php echo $this->build_link_attrs( $item['url_control'], $open_new_tab ); ?>>
-												<?php echo esc_html( $item['label'] ); ?>
-											</a>
-										</li>
-									<?php endforeach; ?>
-								</ul>
-							</nav>
-						<?php endif; ?>
-
-						<?php if ( $show_other_links && ! empty( $other_links ) ) : ?>
-							<nav class="dope-footer__links-col" aria-label="<?php echo esc_attr( $other_title ); ?>">
-								<h3 class="dope-footer__col-title"><?php echo esc_html( $other_title ); ?></h3>
-								<ul class="dope-footer__link-list dope-footer__link-list--inline">
-									<?php foreach ( $other_links as $item ) : ?>
-										<li>
-											<a href="<?php echo esc_url( $item['url'] ); ?>" <?php echo $this->build_link_attrs( $item['url_control'], $open_new_tab ); ?>>
-												<?php echo esc_html( $item['label'] ); ?>
-											</a>
-										</li>
-									<?php endforeach; ?>
-								</ul>
-							</nav>
-						<?php endif; ?>
-
 						<?php if ( $show_social && ! empty( $social ) ) : ?>
 							<div class="dope-footer__social" aria-label="<?php esc_attr_e( 'Social links', 'dope-footer' ); ?>">
 								<?php foreach ( $social as $item ) : ?>
@@ -518,70 +447,51 @@ class Dope_Footer_Widget extends Widget_Base {
 							</div>
 						<?php endif; ?>
 					</div>
-				<?php else : ?>
-					<div class="dope-footer__grid dope-footer__grid--signature">
-						<div class="dope-footer__brand-col">
-							<h2 class="dope-footer__brand-name"><?php echo esc_html( $brand_name ); ?></h2>
-							<?php if ( '' !== trim( $brand_tagline ) ) : ?>
-								<p class="dope-footer__brand-tagline"><?php echo esc_html( $brand_tagline ); ?></p>
-							<?php endif; ?>
-							<?php if ( $show_social && ! empty( $social ) ) : ?>
-								<div class="dope-footer__social" aria-label="<?php esc_attr_e( 'Social links', 'dope-footer' ); ?>">
-									<?php foreach ( $social as $item ) : ?>
-										<a class="dope-footer__social-link" href="<?php echo esc_url( $item['url'] ); ?>" aria-label="<?php echo esc_attr( $item['label'] ); ?>" <?php echo $this->build_link_attrs( $item['url_control'], $open_new_tab ); ?>>
-											<?php Icons_Manager::render_icon( $item['icon'], array( 'aria-hidden' => 'true' ) ); ?>
-											<span class="screen-reader-text"><?php echo esc_html( $item['label'] ); ?></span>
+
+					<?php if ( $show_quick_links && ! empty( $quick_links ) ) : ?>
+						<nav class="dope-footer__links-col dope-footer__links-col--quick" aria-label="<?php echo esc_attr( $quick_title ); ?>">
+							<h3 class="dope-footer__col-title"><?php echo esc_html( $quick_title ); ?></h3>
+							<ul class="dope-footer__link-list">
+								<?php foreach ( $quick_links as $item ) : ?>
+									<li>
+										<a href="<?php echo esc_url( $item['url'] ); ?>" <?php echo $this->build_link_attrs( $item['url_control'], $open_new_tab ); ?>>
+											<?php echo esc_html( $item['label'] ); ?>
 										</a>
-									<?php endforeach; ?>
-								</div>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+						</nav>
+					<?php endif; ?>
+
+					<?php if ( $show_other_links && ! empty( $other_links ) ) : ?>
+						<nav class="dope-footer__links-col dope-footer__links-col--other" aria-label="<?php echo esc_attr( $other_title ); ?>">
+							<h3 class="dope-footer__col-title"><?php echo esc_html( $other_title ); ?></h3>
+							<ul class="dope-footer__link-list">
+								<?php foreach ( $other_links as $item ) : ?>
+									<li>
+										<a href="<?php echo esc_url( $item['url'] ); ?>" <?php echo $this->build_link_attrs( $item['url_control'], $open_new_tab ); ?>>
+											<?php echo esc_html( $item['label'] ); ?>
+										</a>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+						</nav>
+					<?php endif; ?>
+
+					<?php if ( $show_contact ) : ?>
+						<div class="dope-footer__contact-col">
+							<h3 class="dope-footer__col-title"><?php echo esc_html( $contact_title ); ?></h3>
+							<?php if ( '' !== trim( $contact_text ) ) : ?>
+								<p class="dope-footer__contact-text"><?php echo esc_html( $contact_text ); ?></p>
+							<?php endif; ?>
+							<?php if ( '' !== trim( $contact_link_url ) && '' !== trim( $contact_link_label ) ) : ?>
+								<a class="dope-footer__contact-link" href="<?php echo esc_url( $contact_link_url ); ?>" <?php echo $contact_link_attrs; ?>>
+									<?php echo esc_html( $contact_link_label ); ?>
+								</a>
 							<?php endif; ?>
 						</div>
-
-						<?php if ( $show_quick_links && ! empty( $quick_links ) ) : ?>
-							<nav class="dope-footer__links-col" aria-label="<?php echo esc_attr( $quick_title ); ?>">
-								<h3 class="dope-footer__col-title"><?php echo esc_html( $quick_title ); ?></h3>
-								<ul class="dope-footer__link-list">
-									<?php foreach ( $quick_links as $item ) : ?>
-										<li>
-											<a href="<?php echo esc_url( $item['url'] ); ?>" <?php echo $this->build_link_attrs( $item['url_control'], $open_new_tab ); ?>>
-												<?php echo esc_html( $item['label'] ); ?>
-											</a>
-										</li>
-									<?php endforeach; ?>
-								</ul>
-							</nav>
-						<?php endif; ?>
-
-						<?php if ( $show_other_links && ! empty( $other_links ) ) : ?>
-							<nav class="dope-footer__links-col" aria-label="<?php echo esc_attr( $other_title ); ?>">
-								<h3 class="dope-footer__col-title"><?php echo esc_html( $other_title ); ?></h3>
-								<ul class="dope-footer__link-list">
-									<?php foreach ( $other_links as $item ) : ?>
-										<li>
-											<a href="<?php echo esc_url( $item['url'] ); ?>" <?php echo $this->build_link_attrs( $item['url_control'], $open_new_tab ); ?>>
-												<?php echo esc_html( $item['label'] ); ?>
-											</a>
-										</li>
-									<?php endforeach; ?>
-								</ul>
-							</nav>
-						<?php endif; ?>
-
-						<?php if ( $show_contact ) : ?>
-							<div class="dope-footer__contact-col">
-								<h3 class="dope-footer__col-title"><?php echo esc_html( $contact_title ); ?></h3>
-								<?php if ( '' !== trim( $contact_text ) ) : ?>
-									<p class="dope-footer__contact-text"><?php echo esc_html( $contact_text ); ?></p>
-								<?php endif; ?>
-								<?php if ( '' !== trim( $contact_link_url ) && '' !== trim( $contact_link_label ) ) : ?>
-									<a class="dope-footer__contact-link" href="<?php echo esc_url( $contact_link_url ); ?>" <?php echo $contact_link_attrs; ?>>
-										<?php echo esc_html( $contact_link_label ); ?>
-									</a>
-								<?php endif; ?>
-							</div>
-						<?php endif; ?>
-					</div>
-				<?php endif; ?>
+					<?php endif; ?>
+				</div>
 
 				<hr class="dope-footer__divider" />
 				<p class="dope-footer__copyright"><?php echo esc_html( $copyright ); ?></p>
@@ -602,6 +512,51 @@ class Dope_Footer_Widget extends Widget_Base {
 	 * @return void
 	 */
 	private function register_style_controls() {
+		$this->start_controls_section(
+			'section_style_background',
+			array(
+				'label' => esc_html__( 'Background', 'dope-footer' ),
+				'tab'   => Controls_Manager::TAB_STYLE,
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			array(
+				'name'     => 'footer_background',
+				'label'    => esc_html__( 'Background', 'dope-footer' ),
+				'types'    => array( 'classic', 'gradient' ),
+				'selector' => '{{WRAPPER}} .dope-footer',
+			)
+		);
+
+		$this->add_group_control(
+			Group_Control_Background::get_type(),
+			array(
+				'name'     => 'footer_background_overlay',
+				'label'    => esc_html__( 'Overlay', 'dope-footer' ),
+				'types'    => array( 'classic', 'gradient' ),
+				'selector' => '{{WRAPPER}} .dope-footer::before',
+			)
+		);
+
+		$this->add_control(
+			'footer_overlay_opacity',
+			array(
+				'label'     => esc_html__( 'Overlay Opacity', 'dope-footer' ),
+				'type'      => Controls_Manager::NUMBER,
+				'min'       => 0,
+				'max'       => 1,
+				'step'      => 0.01,
+				'default'   => 0,
+				'selectors' => array(
+					'{{WRAPPER}} .dope-footer::before' => 'opacity: {{VALUE}};',
+				),
+			)
+		);
+
+		$this->end_controls_section();
+
 		$this->start_controls_section(
 			'section_style_colors',
 			array(
@@ -813,9 +768,7 @@ class Dope_Footer_Widget extends Widget_Base {
 				'max'       => 120,
 				'step'      => 1,
 				'selectors' => array(
-					'{{WRAPPER}} .dope-footer__grid'        => 'gap: {{VALUE}}px;',
-					'{{WRAPPER}} .dope-footer__split-top'   => 'gap: {{VALUE}}px;',
-					'{{WRAPPER}} .dope-footer__split-bottom'=> 'gap: {{VALUE}}px;',
+					'{{WRAPPER}} .dope-footer__grid' => 'gap: {{VALUE}}px;',
 				),
 			)
 		);
@@ -849,6 +802,144 @@ class Dope_Footer_Widget extends Widget_Base {
 				),
 			)
 		);
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_style_columns',
+			array(
+				'label' => esc_html__( 'Columns (Responsive)', 'dope-footer' ),
+				'tab'   => Controls_Manager::TAB_STYLE,
+			)
+		);
+
+		$this->add_responsive_control(
+			'brand_column_width',
+			array(
+				'label'          => esc_html__( 'Brand Column Width', 'dope-footer' ),
+				'type'           => Controls_Manager::SLIDER,
+				'size_units'     => array( '%' ),
+				'range'          => array(
+					'%' => array(
+						'min'  => 20,
+						'max'  => 100,
+						'step' => 1,
+					),
+				),
+				'default'        => array(
+					'size' => 37,
+					'unit' => '%',
+				),
+				'tablet_default' => array(
+					'size' => 50,
+					'unit' => '%',
+				),
+				'mobile_default' => array(
+					'size' => 100,
+					'unit' => '%',
+				),
+				'selectors'      => array(
+					'{{WRAPPER}} .dope-footer__grid--signature' => 'display:flex; flex-wrap:wrap; align-items:flex-start;',
+					'{{WRAPPER}} .dope-footer__brand-col'       => 'flex: 0 0 {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'quick_column_width',
+			array(
+				'label'          => esc_html__( 'Quick Links Column Width', 'dope-footer' ),
+				'type'           => Controls_Manager::SLIDER,
+				'size_units'     => array( '%' ),
+				'range'          => array(
+					'%' => array(
+						'min'  => 20,
+						'max'  => 100,
+						'step' => 1,
+					),
+				),
+				'default'        => array(
+					'size' => 21,
+					'unit' => '%',
+				),
+				'tablet_default' => array(
+					'size' => 50,
+					'unit' => '%',
+				),
+				'mobile_default' => array(
+					'size' => 100,
+					'unit' => '%',
+				),
+				'selectors'      => array(
+					'{{WRAPPER}} .dope-footer__grid--signature'        => 'display:flex; flex-wrap:wrap; align-items:flex-start;',
+					'{{WRAPPER}} .dope-footer__links-col--quick'       => 'flex: 0 0 {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'other_column_width',
+			array(
+				'label'          => esc_html__( 'Other Links Column Width', 'dope-footer' ),
+				'type'           => Controls_Manager::SLIDER,
+				'size_units'     => array( '%' ),
+				'range'          => array(
+					'%' => array(
+						'min'  => 20,
+						'max'  => 100,
+						'step' => 1,
+					),
+				),
+				'default'        => array(
+					'size' => 22,
+					'unit' => '%',
+				),
+				'tablet_default' => array(
+					'size' => 50,
+					'unit' => '%',
+				),
+				'mobile_default' => array(
+					'size' => 100,
+					'unit' => '%',
+				),
+				'selectors'      => array(
+					'{{WRAPPER}} .dope-footer__grid--signature'        => 'display:flex; flex-wrap:wrap; align-items:flex-start;',
+					'{{WRAPPER}} .dope-footer__links-col--other'       => 'flex: 0 0 {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'contact_column_width',
+			array(
+				'label'          => esc_html__( 'Contact Column Width', 'dope-footer' ),
+				'type'           => Controls_Manager::SLIDER,
+				'size_units'     => array( '%' ),
+				'range'          => array(
+					'%' => array(
+						'min'  => 20,
+						'max'  => 100,
+						'step' => 1,
+					),
+				),
+				'default'        => array(
+					'size' => 20,
+					'unit' => '%',
+				),
+				'tablet_default' => array(
+					'size' => 50,
+					'unit' => '%',
+				),
+				'mobile_default' => array(
+					'size' => 100,
+					'unit' => '%',
+				),
+				'selectors'      => array(
+					'{{WRAPPER}} .dope-footer__grid--signature' => 'display:flex; flex-wrap:wrap; align-items:flex-start;',
+					'{{WRAPPER}} .dope-footer__contact-col'     => 'flex: 0 0 {{SIZE}}{{UNIT}}; max-width: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
 		$this->end_controls_section();
 	}
 

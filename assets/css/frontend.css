@@ -24,7 +24,24 @@
   font-family: var(--df-font-base);
   line-height: var(--df-line-height);
   position: relative;
+  overflow: hidden;
+  isolation: isolate;
   margin-top: 40px;
+}
+
+.dope-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: transparent;
+}
+
+.dope-footer > * {
+  position: relative;
+  z-index: 1;
 }
 
 .dope-footer__container {
